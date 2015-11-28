@@ -1,5 +1,6 @@
 import random
 import math
+import time
 
 """
 Written by Idan Hovav, 27 November 2015. All rights reserved.
@@ -12,6 +13,9 @@ To Do:
 - make the range of publicMod and publicGen customizable by user.
 
 """
+
+#The upper limit for the secret number
+UPPERLIM = 100000
 
 class Encryptor:
 
@@ -28,8 +32,6 @@ class Encryptor:
 	def decrypt(self, other):
 		self.message = (other ** self.secret) % self.modulus
 		return self.message
-
-
 
 def getPrime(x, y):
 	a = 4
@@ -110,6 +112,54 @@ def decrypt_explanation(name, mod, other, secret, shared):
 	print("Equation: " + str(other) + "^" + str(secret) + " mod " + str(mod)
 		+ " = " + str(shared))
 
+def hack(mod, gen, a, b, secret, hacktime):
+	"""	A function that tries to brute force the solution using the 
+	public data available from the communication
+	"""
+	print("This function brute forces an answer by trying a bunch of numbers.")
+	starttime = time.time()
+	possibilities = []
+	pos = []
+	#brute forcing solution
+	for x in range(UPPERLIM):
+		if (((gen ** x) % mod) == a):
+			possibilities.append(x)
+			break
+		if (((gen ** x) % mod) == b):
+			possibilities.append(x)
+			break
+		if ((time.time() - starttime) > hacktime):
+			print("Hacker took longer than " + str(hacktime) 
+				+ " seconds. They have failed.")
+			return
+	hacker = Encryptor(mod, gen, "hacker")
+	for x in possibilities:
+		hacker.secret = x
+		pos.append(hacker.decrypt(b))
+	if secret in pos and len(pos) == 1:
+		print("Success! The hacker was able to find the shared number of "
+		+ str(pos[0]) + ".\nBut it took the computer " 
+		+ str(time.time() - starttime)
+		+ " seconds to find the answer when the modulus is " + str(mod)
+		+ " and the generator is " + str(gen) + ".")
+		print("\nDon't worry! We're doing this with tiny numbers!"
+			+ " The numbers your bank uses are enormous compared to these, and" 
+			+ " to brute force those numbers would take decades!")
+	else:
+		print("The hacker failed to find the secret, and it took them "
+			+ str(time.time() - starttime) + " to fail!")
+	print(pos)
+
+
+def tohack(mod, gen, a, b, secret):
+	response = input("Want to try and hack this communication? y or n: ")
+	if response == 'y':
+		time = int(input("How many seconds would you like to give the"
+		+ " hacker to crack the encryption? "))
+		hack(mod, gen, a, b, secret, time)
+	else:
+		pass
+
 def communicate():
 	"""	
 	Ask for two names.
@@ -133,8 +183,10 @@ def communicate():
 
 		a = Encryptor(publicMod, publicGen, a)
 		b = Encryptor(publicMod, publicGen, b)
-		a.secret = int(input(a.name + ", what's your secret number? "))
-		b.secret = int(input(b.name + ", what's your secret number? "))
+		a.secret = int(input(a.name + ", what's your secret number between" 
+			+ " 0 and " + str(UPPERLIM) + "? "))
+		b.secret = int(input(b.name + ", what's your secret number between" 
+			+ " 0 and " + str(UPPERLIM) + "? "))
 
 		aMessage = a.encrypt()
 		encrypt_explanation(a.name, publicMod, publicGen, a.secret, aMessage)
@@ -157,9 +209,11 @@ def communicate():
 		if aShared == bShared:
 			print("\nIt worked! The shared message is " + str(aShared) + ".")
 			print("This number is a key for future, secure communication!\n")
+			tohack(publicMod, publicGen, aMessage, bMessage, aShared)
 		else:
 			print("\nSomething went wrong. The two messages we got were " 
 				+ str(aShared) + " and " + str(bShared) + ".\n")
+
 		cont = ask()
 	print("Thank you for playing!")
 
