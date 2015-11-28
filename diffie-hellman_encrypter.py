@@ -37,17 +37,19 @@ def getPrime(x, y):
 		a = random.randint(x, y)
 	return a
 
-def getGenerator(modulus, x, y):
+def getGenerator(modulus, k, m):
 	good = False
 	while not good:
 		remainders = []
-		gen = getPrime(x, y)
+		gen = getPrime(k, m)
+		print(gen)
 		good = True
 		for x in range(1, modulus):
 			remainders.append((gen ** x) % modulus)
 		for y in range(1, modulus):
 			if y not in remainders:
 				good = False
+				break
 	return gen
 
 def ask():
@@ -123,10 +125,10 @@ def communicate():
 	while cont:
 		a = input('Enter a name for person 1: ')
 		b = input('Enter a name for person 2: ')
-		publicMod = getPrime(20, 999999999)
-		publicGen = getGenerator(publicMod, 3, 99999)
-
-		print("The public modulus is   " + str(publicMod) + ".")
+		publicMod = getPrime(20, 9999)
+		print("The public modulus is " + str(publicMod) + ".")
+		print("Calculating possible generators for " + str(publicMod) + ":")
+		publicGen = getGenerator(publicMod, 3, 500)
 		print("The public generator is " + str(publicGen) + ".")
 
 		a = Encryptor(publicMod, publicGen, a)
