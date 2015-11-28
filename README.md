@@ -1,1 +1,3 @@
 # Diffie-Hellman-Encrypter
+
+This program shows the inner workings of the Diffie-Hellman Encrypter by showing step-by-step how a public modulus and public generator are created, then using these and secret numbers to encrypt and successfully decrypt a message. The end result is a message shared by two ends of a communication line that is not shared by anyone listening in on the line. This shared message can be used as a key for future communication. Read the source code! It’s interesting, if you’re into this type of stuff!
