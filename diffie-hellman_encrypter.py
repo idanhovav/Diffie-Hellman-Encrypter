@@ -136,10 +136,10 @@ def communicate():
 		b.secret = int(input(b.name + ", what's your secret number? "))
 
 		aMessage = a.encrypt()
-		encrypt_explanation(a.name, publicGen, a.secret, publicMod, aMessage)
+		encrypt_explanation(a.name, publicMod, publicGen, a.secret, aMessage)
 		print("\n" + b.name + " does the same.")
 		bMessage = b.encrypt()
-		encrypt_explanation(b.name, publicGen, b.secret, publicMod, bMessage)
+		encrypt_explanation(b.name, publicMod, publicGen, b.secret, bMessage)
 
 		print("\nThen, they pass each other their calculated messages:")
 		print(a.name + " passes the number " + str(aMessage) 
