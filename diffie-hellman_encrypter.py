@@ -9,7 +9,7 @@ used for future communication, that is its value.
 
 To Do:
 
-- make functions (decrypt, encrypt) print out what they're doing
+- make the range of publicMod and publicGen customizable by user.
 
 """
 
@@ -37,12 +37,11 @@ def getPrime(x, y):
 		a = random.randint(x, y)
 	return a
 
-def getGenerator(modulus):
+def getGenerator(modulus, x, y):
 	good = False
 	while not good:
 		remainders = []
-		gen = getPrime(3, 50)
-		#print(gen)
+		gen = getPrime(x, y)
 		good = True
 		for x in range(1, modulus):
 			remainders.append((gen ** x) % modulus)
@@ -124,8 +123,8 @@ def communicate():
 	while cont:
 		a = input('Enter a name for person 1: ')
 		b = input('Enter a name for person 2: ')
-		publicMod = getPrime(20, 400)
-		publicGen = getGenerator(publicMod)
+		publicMod = getPrime(20, 999999999)
+		publicGen = getGenerator(publicMod, 3, 99999)
 
 		print("The public modulus is   " + str(publicMod) + ".")
 		print("The public generator is " + str(publicGen) + ".")
@@ -155,9 +154,10 @@ def communicate():
 
 		if aShared == bShared:
 			print("\nIt worked! The shared message is " + str(aShared) + ".")
+			print("This number is a key for future, secure communication!\n")
 		else:
 			print("\nSomething went wrong. The two messages we got were " 
-				+ str(aShared) + " and " + str(bShared) + ".")
+				+ str(aShared) + " and " + str(bShared) + ".\n")
 		cont = ask()
 	print("Thank you for playing!")
 
