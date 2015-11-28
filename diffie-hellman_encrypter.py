@@ -1,9 +1,11 @@
 import random
+import math
 
 """
 Written by Idan Hovav, 27 November 2015. All rights reserved.
-
 This script will be able to send and receive encrypted messages.
+Note: the shared number at the end is not the secret. It is a key that can be
+used for future communication, that is its value.
 
 To Do:
 
@@ -90,6 +92,23 @@ def is_prime(a):
 		b += 1
 	return True
 
+def encrypt_explanation(name, mod, gen, secret, message):
+	print("\n" + name + " raises the public generator, " + str(gen)
+		+ ", to the power of their private number, " + str(secret) + ".")
+	print("Then, " + name
+		+ " finds the modulus of that number with the public modulus, " 
+		+ str(mod) + ", and gets " + str(message))
+	print("Equation: " + str(gen) + "^" + str(secret) + " mod " + str(mod)
+		+ " = " + str(message))
+
+def decrypt_explanation(name, mod, other, secret, shared):
+	print("\n" + name + " takes the number they were passed, " + str(other)
+		+ ", and raises it" + " to the power of their original secret number, "
+		+ str(secret) + ", and again uses the public modulus, " + str(mod) 
+		+ ", to find the shared message, " + str(shared) + ".")
+	print("Equation: " + str(other) + "^" + str(secret) + " mod " + str(mod)
+		+ " = " + str(shared))
+
 def communicate():
 	"""	
 	Ask for two names.
@@ -111,24 +130,34 @@ def communicate():
 		print("The public modulus is   " + str(publicMod) + ".")
 		print("The public generator is " + str(publicGen) + ".")
 
-
 		a = Encryptor(publicMod, publicGen, a)
 		b = Encryptor(publicMod, publicGen, b)
 		a.secret = int(input(a.name + ", what's your secret number? "))
 		b.secret = int(input(b.name + ", what's your secret number? "))
 
 		aMessage = a.encrypt()
+		encrypt_explanation(a.name, publicGen, a.secret, publicMod, aMessage)
+		print("\n" + b.name + " does the same.")
 		bMessage = b.encrypt()
+		encrypt_explanation(b.name, publicGen, b.secret, publicMod, bMessage)
 
-		print(a.name + " passes the number " + str(aMessage) + " to " + b.name + ".")
-		print(b.name + " passes the number " + str(bMessage) + " to " + a.name + ".")
+		print("\nThen, they pass each other their calculated messages:")
+		print(a.name + " passes the number " + str(aMessage) 
+			+ " to " + b.name + ".")
+		print(b.name + " passes the number " + str(bMessage) 
+			+ " to " + a.name + ".")
 
-		print("Then, they can both calculate the shared message using their secret numbers.")
-		aMessage, bMessage = a.decrypt(bMessage), b.decrypt(aMessage)
-		if aMessage == bMessage:
-			print("It worked! The shared message is " + str(aMessage) + ".")
+		print("\nNow, they can both calculate the " 
+			+ "shared message using their secret numbers.")
+		aShared, bShared = a.decrypt(bMessage), b.decrypt(aMessage)
+		decrypt_explanation(a.name, publicMod, bMessage, a.secret, aShared)
+		decrypt_explanation(b.name, publicMod, aMessage, b.secret, bShared)
+
+		if aShared == bShared:
+			print("\nIt worked! The shared message is " + str(aShared) + ".")
 		else:
-			print("Something went wrong. The two messages we got were " + str(aMessage) + " and " + str(bMessage) + ".")
+			print("\nSomething went wrong. The two messages we got were " 
+				+ str(aShared) + " and " + str(bShared) + ".")
 		cont = ask()
 	print("Thank you for playing!")
 
