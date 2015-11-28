@@ -1,5 +1,4 @@
 import random
-from find_primes import * 
 
 """
 Written by Idan Hovav, 27 November 2015. All rights reserved.
@@ -8,10 +7,6 @@ This script will be able to send and receive encrypted messages.
 
 To Do:
 
-- generate primes 
-- do modulus calculation
-- do decryption method
-- check if a generator
 - make functions (decrypt, encrypt) print out what they're doing
 
 """
@@ -36,7 +31,7 @@ class Encryptor:
 
 def getPrime(x, y):
 	a = 4
-	while not better_is_prime(a):
+	while not is_prime(a):
 		a = random.randint(x, y)
 	return a
 
@@ -63,7 +58,37 @@ def ask():
 	else:
 		return ask()
 
-
+def is_prime(a):
+	"""
+	>>> is_prime(4)
+	False
+	>>> is_prime(5)
+	True
+	>>> is_prime(6)
+	False
+	>>> is_prime(7)
+	True
+	>>> is_prime(8)
+	False
+	>>> is_prime(9)
+	False
+	>>> is_prime(10)
+	False
+	>>> is_prime(11)
+	True
+	>>> is_prime(12)
+	False
+	>>> is_prime(13)
+	True
+	>>> is_prime(14)
+	False
+	"""
+	b = 2
+	while b <= math.sqrt(a):
+		if a % b == 0:
+			return False
+		b += 1
+	return True
 
 def communicate():
 	"""	
