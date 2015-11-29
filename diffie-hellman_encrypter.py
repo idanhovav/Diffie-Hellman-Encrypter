@@ -159,12 +159,15 @@ def hack(mod, gen, a, b, secret, hacktime):
 		+ " seconds to find the answer when the modulus is " + str(mod)
 		+ " and the generator is " + str(gen) + ".")
 		if len(pos) > 1:
+			wait(2)
 			print("However, the program also found other possibilities: ")
 			print(pos)
 			print("So future hacking will have to try all of these options.")
+			wait(2)
 			print("This happened because, with a large enough range,"
 				+ " multiple numbers give the same modulo, and so all of"
 				+ " those options were found.")
+			wait(2)
 		print("\nDon't worry though! We're doing this with tiny numbers!"
 			+ " The numbers your bank uses are enormous compared to these, and" 
 			+ " to brute force those numbers would take decades!")
@@ -172,10 +175,12 @@ def hack(mod, gen, a, b, secret, hacktime):
 		print("The hacker failed to find the secret because" 
 			+ " they guessed the wrong number, " + str(pos[0]) 
 			+ " and it took them " + str(time.time() - starttime) + " to fail!")
+		wait(3)
 		print("The fact that this takes so long to calculate in reverse is"
 			+ " the strength of this encryption! Imagine how long it would"
 			+ " take for a number that is hundreds of digits long!"
 			+ " Good luck hackers!")
+		wait(3)
 	print("\nThe hacker thought the secret numbers were:")
 	print(aPos + bPos)
 	print("\n")
@@ -188,6 +193,11 @@ def tohack(mod, gen, a, b, secret):
 		hack(mod, gen, a, b, secret, time)
 	else:
 		pass
+
+def wait(a):
+	for x in range(a):
+		time.sleep(1)
+		print(".")
 
 def communicate():
 	"""	
@@ -224,11 +234,15 @@ def communicate():
 			b.secret = int(input(b.name + ", what's your secret number between" 
 				+ " 1 and " + str(UPPERLIM) + "? "))
 
+		wait(3)
+
 		aMessage = a.encrypt()
 		encrypt_explanation(a.name, publicMod, publicGen, a.secret, aMessage)
 		print("\n" + b.name + " does the same.")
 		bMessage = b.encrypt()
 		encrypt_explanation(b.name, publicMod, publicGen, b.secret, bMessage)
+
+		wait(5)
 
 		print("\nThen, they pass each other their calculated messages:")
 		print(a.name + " passes the number " + str(aMessage) 
@@ -236,11 +250,15 @@ def communicate():
 		print(b.name + " passes the number " + str(bMessage) 
 			+ " to " + a.name + ".")
 
+		wait(5)
+
 		print("\nNow, they can both calculate the " 
 			+ "shared message using their secret numbers.")
 		aShared, bShared = a.decrypt(bMessage), b.decrypt(aMessage)
 		decrypt_explanation(a.name, publicMod, bMessage, a.secret, aShared)
 		decrypt_explanation(b.name, publicMod, aMessage, b.secret, bShared)
+
+		wait(5)
 
 		if aShared == bShared:
 			print("\nIt worked! The shared message is " + str(aShared) + ".")
