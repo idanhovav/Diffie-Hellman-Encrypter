@@ -15,7 +15,7 @@ To Do:
 """
 
 #The upper limit for the secret number
-UPPERLIM = 100000
+UPPERLIM = 1000000
 
 class Encryptor:
 
@@ -55,10 +55,10 @@ def getGenerator(modulus, k, m):
 	return gen
 
 def ask():
-	response = input("Would you like to send another message? T or F: ")
-	if response == "T":
+	response = input("Would you like to send another message? y or n: ")
+	if response == "y":
 		return True
-	elif response == "F":
+	elif response == "n":
 		return False
 	else:
 		return ask()
@@ -115,8 +115,19 @@ def decrypt_explanation(name, mod, other, secret, shared):
 def hack(mod, gen, a, b, secret, hacktime):
 	"""	A function that tries to brute force the solution using the 
 	public data available from the communication
+
+	Issues:
+	2 approaches:
+		- break brute force after first discovery that works. Hope this is the
+		right number. For UPPERLIM > 1000, prob not. 
+		- loop through entire range, get multiple possibilities. Takes a long
+		time. 
+		Right now doing 2nd option
+
+	NOTE: If UPPERLIM < 1000 then hack works pretty well.
 	"""
-	print("This function brute forces an answer by trying a bunch of numbers.")
+	print("\nThis function brute forces an answer by trying a bunch of numbers."
+		)
 	starttime = time.time()
 	possibilities = []
 	pos = []
@@ -124,10 +135,10 @@ def hack(mod, gen, a, b, secret, hacktime):
 	for x in range(UPPERLIM):
 		if (((gen ** x) % mod) == a):
 			possibilities.append(x)
-			break
+			#break
 		if (((gen ** x) % mod) == b):
 			possibilities.append(x)
-			break
+			#break
 		if ((time.time() - starttime) > hacktime):
 			print("Hacker took longer than " + str(hacktime) 
 				+ " seconds. They have failed.")
@@ -136,17 +147,22 @@ def hack(mod, gen, a, b, secret, hacktime):
 	for x in possibilities:
 		hacker.secret = x
 		pos.append(hacker.decrypt(b))
-	if secret in pos and len(pos) == 1:
+	if secret in pos:
 		print("Success! The hacker was able to find the shared number of "
-		+ str(pos[0]) + ".\nBut it took the computer " 
+		+ secret + ".\nBut it took the computer " 
 		+ str(time.time() - starttime)
 		+ " seconds to find the answer when the modulus is " + str(mod)
 		+ " and the generator is " + str(gen) + ".")
-		print("\nDon't worry! We're doing this with tiny numbers!"
+		if len(pos) > 1:
+			print("However, the program also found other possibilities: ")
+			print(pos)
+			print("So future hacking will have to try all of these options.")
+		print("\nDon't worry though! We're doing this with tiny numbers!"
 			+ " The numbers your bank uses are enormous compared to these, and" 
 			+ " to brute force those numbers would take decades!")
 	else:
-		print("The hacker failed to find the secret, and it took them "
+		print("The hacker failed to find the secret because" 
+			+ " they guessed the wrong number, " + str(pos[0]) +" and it took them "
 			+ str(time.time() - starttime) + " to fail!")
 	print(pos)
 
