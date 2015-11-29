@@ -129,24 +129,29 @@ def hack(mod, gen, a, b, secret, hacktime):
 	print("\nThis function brute forces an answer by trying a bunch of numbers."
 		)
 	starttime = time.time()
-	possibilities = []
+	aPos, bPos = [], []
 	pos = []
 	#brute forcing solution
 	for x in range(UPPERLIM):
 		if (((gen ** x) % mod) == a):
-			possibilities.append(x)
+			aPos.append(x)
 			#break
 		if (((gen ** x) % mod) == b):
-			possibilities.append(x)
+			bPos.append(x)
 			#break
 		if ((time.time() - starttime) > hacktime):
 			print("Hacker took longer than " + str(hacktime) 
 				+ " seconds. They have failed.")
 			return
 	hacker = Encryptor(mod, gen, "hacker")
-	for x in possibilities:
+	for x in aPos:
 		hacker.secret = x
 		pos.append(hacker.decrypt(b))
+	for x in bPos:
+		hacker.secret = x
+		pos.append(hacker.decrypt(a))
+	#removes repeats
+	pos = set(pos)
 	if secret in pos:
 		print("Success! The hacker was able to find the shared number of "
 		+ str(secret) + ".\nBut it took the computer " 
@@ -171,8 +176,9 @@ def hack(mod, gen, a, b, secret, hacktime):
 			+ " the strength of this encryption! Imagine how long it would"
 			+ " take for a number that is hundreds of digits long!"
 			+ " Good luck hackers!")
-	print(pos)
-
+	print("\nThe hacker thought the secret numbers were:")
+	print(aPos + bPos)
+	print("\n")
 
 def tohack(mod, gen, a, b, secret):
 	response = input("Want to try and hack this communication? y or n: ")
