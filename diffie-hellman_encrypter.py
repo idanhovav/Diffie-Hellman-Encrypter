@@ -157,13 +157,20 @@ def hack(mod, gen, a, b, secret, hacktime):
 			print("However, the program also found other possibilities: ")
 			print(pos)
 			print("So future hacking will have to try all of these options.")
+			print("This happened because, with a large enough range,"
+				+ " multiple numbers give the same modulo, and so all of"
+				+ " those options were found.")
 		print("\nDon't worry though! We're doing this with tiny numbers!"
 			+ " The numbers your bank uses are enormous compared to these, and" 
 			+ " to brute force those numbers would take decades!")
 	else:
 		print("The hacker failed to find the secret because" 
-			+ " they guessed the wrong number, " + str(pos[0]) +" and it took them "
-			+ str(time.time() - starttime) + " to fail!")
+			+ " they guessed the wrong number, " + str(pos[0]) 
+			+ " and it took them " + str(time.time() - starttime) + " to fail!")
+		print("The fact that this takes so long to calculate in reverse is"
+			+ " the strength of this encryption! Imagine how long it would"
+			+ " take for a number that is hundreds of digits long!"
+			+ " Good luck hackers!")
 	print(pos)
 
 
@@ -199,10 +206,17 @@ def communicate():
 
 		a = Encryptor(publicMod, publicGen, a)
 		b = Encryptor(publicMod, publicGen, b)
-		a.secret = int(input(a.name + ", what's your secret number between" 
-			+ " 0 and " + str(UPPERLIM) + "? "))
-		b.secret = int(input(b.name + ", what's your secret number between" 
-			+ " 0 and " + str(UPPERLIM) + "? "))
+		global UPPERLIM
+		UPPERLIM = int(input("Choose an upper limit for your secret number." 
+			+ "\nHint: lower numbers will raise the chance of a hack. " 
+			+ "\nUpper Limit: "))
+
+		while a.secret > UPPERLIM or a.secret <= 0:
+			a.secret = int(input(a.name + ", what's your secret number between" 
+				+ " 1 and " + str(UPPERLIM) + "? "))
+		while b.secret > UPPERLIM or b.secret <= 0:
+			b.secret = int(input(b.name + ", what's your secret number between" 
+				+ " 1 and " + str(UPPERLIM) + "? "))
 
 		aMessage = a.encrypt()
 		encrypt_explanation(a.name, publicMod, publicGen, a.secret, aMessage)
