@@ -149,7 +149,7 @@ def hack(mod, gen, a, b, secret, hacktime):
 		pos.append(hacker.decrypt(b))
 	if secret in pos:
 		print("Success! The hacker was able to find the shared number of "
-		+ secret + ".\nBut it took the computer " 
+		+ str(secret) + ".\nBut it took the computer " 
 		+ str(time.time() - starttime)
 		+ " seconds to find the answer when the modulus is " + str(mod)
 		+ " and the generator is " + str(gen) + ".")
