@@ -58,8 +58,8 @@ def getGenerator(modulus, k, m):
 		if len(remainders) == modulus - 1:
 			return gen
 	"""
-
-	while True:
+	tries = 0
+	while tries <= ((m-k) + 1):
 		gen = getPrime(k, m)
 		print(gen)
 		pows = [gen]
@@ -69,7 +69,13 @@ def getGenerator(modulus, k, m):
 		remainders = set([(x % modulus) for x in pows])
 		if len(remainders) == modulus - 1:
 			return gen
-
+		tries += 1
+	print("No generator found. Increasing generator range by 10 on each side.")
+	l = k - 10
+	n = m + 10
+	if l <= 0:
+		l = 1
+	return getGenerator(modulus, l, n)
 def ask():
 	response = input("Would you like to send another message? y or n: ")
 	if response == "y":
