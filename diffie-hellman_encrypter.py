@@ -49,12 +49,24 @@ def getGenerator(modulus, k, m):
 			if y not in remainders:
 				good = False
 				break
-	return gen"""
+	return gen
+	"""
+	"""	while True:
+		gen = getPrime(k, m)
+		print(gen)
+		remainders = set([pow(gen, x, modulus) for x in range(modulus)])
+		if len(remainders) == modulus - 1:
+			return gen
+	"""
 
 	while True:
 		gen = getPrime(k, m)
 		print(gen)
-		remainders = set([pow(gen, x, modulus) for x in range(modulus)])
+		pows = [gen]
+		for x in range(modulus):
+			a = pows[0]
+			pows.insert(0, a*gen)
+		remainders = set([(x % modulus) for x in pows])
 		if len(remainders) == modulus - 1:
 			return gen
 
