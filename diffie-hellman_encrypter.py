@@ -14,9 +14,6 @@ To Do:
 
 """
 
-#The upper limit for the secret number
-UPPERLIM = 1000000
-
 class Encryptor:
 
 	def __init__(self, mod, gen, name):
@@ -26,11 +23,11 @@ class Encryptor:
 		self.secret = 0
 	
 	def encrypt(self):
-		self.remainder = (self.generator**self.secret) % self.modulus
+		self.remainder = pow(self.generator, self.secret, self.modulus)
 		return self.remainder
 
 	def decrypt(self, other):
-		self.message = (other ** self.secret) % self.modulus
+		self.message = pow(other, self.secret, self.modulus)
 		return self.message
 
 def getPrime(x, y):
@@ -40,19 +37,26 @@ def getPrime(x, y):
 	return a
 
 def getGenerator(modulus, k, m):
-	good = False
+	"""good = False
 	while not good:
 		remainders = []
 		gen = getPrime(k, m)
 		print(gen)
 		good = True
 		for x in range(1, modulus):
-			remainders.append((gen ** x) % modulus)
+			remainders.append(pow(gen, x, modulus))
 		for y in range(1, modulus):
 			if y not in remainders:
 				good = False
 				break
-	return gen
+	return gen"""
+
+	while True:
+		gen = getPrime(k, m)
+		print(gen)
+		remainders = set([pow(gen, x, modulus) for x in range(modulus)])
+		if len(remainders) == modulus - 1:
+			return gen
 
 def ask():
 	response = input("Would you like to send another message? y or n: ")
@@ -133,10 +137,10 @@ def hack(mod, gen, a, b, secret, hacktime):
 	pos = []
 	#brute forcing solution
 	for x in range(UPPERLIM):
-		if (((gen ** x) % mod) == a):
+		if ((pow(gen, x, mod)) == a):
 			aPos.append(x)
 			#break
-		if (((gen ** x) % mod) == b):
+		if ((pow(gen, x, mod)) == b):
 			bPos.append(x)
 			#break
 		if ((time.time() - starttime) > hacktime):
@@ -214,10 +218,10 @@ def communicate():
 	while cont:
 		a = input('Enter a name for person 1: ')
 		b = input('Enter a name for person 2: ')
-		publicMod = getPrime(20, 9999)
+		publicMod = getPrime(20, 99999)
 		print("The public modulus is " + str(publicMod) + ".")
 		print("Calculating possible generators for " + str(publicMod) + ":")
-		publicGen = getGenerator(publicMod, 3, 500)
+		publicGen = getGenerator(publicMod, 3, 999)
 		print("The public generator is " + str(publicGen) + ".")
 
 		a = Encryptor(publicMod, publicGen, a)
