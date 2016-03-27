@@ -58,7 +58,7 @@ def getGenerator(modulus, k, m):
 		if len(remainders) == modulus - 1:
 			return gen
 	"""
-	tries = 0
+	"""tries = 0
 	while tries <= ((m-k) + 1):
 		gen = getPrime(k, m)
 		print(gen)
@@ -75,7 +75,17 @@ def getGenerator(modulus, k, m):
 	n = m + 10
 	if l <= 0:
 		l = 1
-	return getGenerator(modulus, l, n)
+	return getGenerator(modulus, l, n)"""
+	gen = getPrime(k, m)
+	while(gcd(modulus, gen) != 1):
+		print(gen)
+		gen = getPrime(k, m)
+	return gen
+
+def gcd(a, b):
+	if (b == 0):
+		return a
+	return gcd(b, a % b) 
 def ask():
 	response = input("Would you like to send another message? y or n: ")
 	if response == "y":
